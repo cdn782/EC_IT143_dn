@@ -1,15 +1,32 @@
--- Q: How to extract first name from contact Name?
+-- Q2: How to keep track of when a record was last modified?
+-- A2: maybe use an after update trigger
 
--- A: Well, here is your problem...
--- customerName = Alejandra Camino -> Alejandra
--- Google search "How to extract first Name from combined name tsql stack overflow"
--- https://stackoverflow.com/questiions/5145791/extracting-fist-name-and-last-name
+-- Q3: Did it work?
+-- A3: Well, let see...yup
 
-with s1 --use a common Table Expression and compare first_name to first_name2
-    AS (select t.contactName
-     , left (t.ContactName, CHARINDEX(' ',t.ContactName + ' ') - 1) AS first_name
-	 ,dbo.udf_parse_first_name(t.contactName) as first_name2
-    from dbo.t_w3_schools_customers as t)
-	Select s1.*
-	from s1
-	where s1.first_name<>s1.first_name2; --expected result is 0 rows
+--Remove stuff if it is already there
+DELETE From dbo.t_hello_world
+ WHERE my_message IN('Hello world2','Hello world3', 'Hello world4');
+
+ -- load test rows
+ INSERT INTO dbo.t_hello_world(my_message)
+ VALUES ('Hello world2'), ('Hello world3');
+
+ -- see if the trigger worked
+   SElECT t.*
+     from dbo.t_hello_world as t;
+
+-- Try it again 
+   UPDATE dbo.t_hello_world set my_message = 'Hello world4'
+      where my_message = 'Hello world3';
+
+
+  -- see if the trigger worked
+  SELECT t.*
+    from dbo.t_hello_world as t;
+
+-- Q4: How to keep track of who last modified a record?
+-- A4: This works for server user and the initial INSERT...
+
+ALTER TABLE dbo.t_hello_world
+ADD last_modified_by VARCHAR(50) DEFaULT suser_name();

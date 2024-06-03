@@ -1,34 +1,26 @@
-create function [dbo].[udf_parse_first_name]
-(@v_combined_name as varchar(500)
-)
-Returns Varchar(100)
+-- Q2: How to keep track of when a record was last modified?
+-- A2: maybe use an after update trigger
 
-/*****************************************************************************************************************
-NAME:    dbo.udf_parse_first_name
-PURPOSE: parse first name from combined name
+-- Q3: Did it work?
+-- A3: Well, let see...yup
 
-MODIFICATION LOG:
-Ver      Date        Author        Description
------   ----------   -----------   -------------------------------------------------------------------------------
-1.0     06/04/2022   David name      1. Built this script for EC IT143
+--Remove stuff if it is already there
+DELETE From dbo.t_hello_world
+ WHERE my_message IN('Hello world2','Hello world3', 'Hello world4');
+
+ -- load test rows
+ INSERT INTO dbo.t_hello_world(my_message)
+ VALUES ('Hello world2'), ('Hello world3');
+
+ -- see if the trigger worked
+   SElECT t.*
+     from dbo.t_hello_world as t;
+
+-- Try it again 
+   UPDATE dbo.t_hello_world set my_message = 'Hello world4'
+      where my_message = 'Hello world3';
 
 
-RUNTIME: 
-1s
-
-NOTES: 
-Adapted from the following...
- https://stackoverflow.com/questiions/5145791/extracting-fist-name-and-last-name
- 
-******************************************************************************************************************/
-
-      BEGIN
-
-           DECLARE @v_first_name as varchar(100);
-
-	      set @v_first_name = LEFT(@v_combined_name, CHARINDEX(' ',@v_combined_name + ' ')  -1);
-
-	      RETURN @v_first_name;
-
-		  END;
-	GO
+  -- see if the trigger worked
+  SELECT t.*
+    from dbo.t_hello_world as t;
